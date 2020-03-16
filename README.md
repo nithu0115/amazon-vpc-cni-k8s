@@ -299,7 +299,19 @@ Default: Unset
 
 Valid Values: `stdout` or a file path
 
-Specifies where to write the logging output. Either to stdout or to override the default file.
+Specifies where to write the logging output of L-IPamD. Either to stdout or to override the default file.
+
+---
+
+`AWS_VPC_K8S_PLUGIN_LOG_FILE`
+
+Type: String
+
+Default: Unset
+
+Valid Values: `stdout` or a file path
+
+Specifies where to write the logging output for CNI plugin. Either to stdout or to override the default file.
 
 ---
 

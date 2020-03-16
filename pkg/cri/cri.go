@@ -5,10 +5,9 @@ import (
 	"errors"
 	"os"
 
+	"github.com/aws/amazon-vpc-cni-k8s/pkg/utils/logger"
 	"google.golang.org/grpc"
 	runtimeapi "k8s.io/cri-api/pkg/apis/runtime/v1alpha2"
-
-	log "github.com/cihub/seelog"
 )
 
 const (
@@ -25,7 +24,7 @@ type SandboxInfo struct {
 }
 
 type APIs interface {
-	GetRunningPodSandboxes() (map[string]*SandboxInfo, error)
+	GetRunningPodSandboxes(log logger.Logger) (map[string]*SandboxInfo, error)
 }
 
 type Client struct{}
@@ -34,7 +33,8 @@ func New() *Client {
 	return &Client{}
 }
 
-func (c *Client) GetRunningPodSandboxes() (map[string]*SandboxInfo, error) {
+//GetRunningPodSandboxes get running sandboxIDs
+func (c *Client) GetRunningPodSandboxes(log logger.Logger) (map[string]*SandboxInfo, error) {
 	socketPath := dockerSocketPath
 	if info, err := os.Stat("/var/run/cri.sock"); err == nil && !info.IsDir() {
 		socketPath = criSocketPath
@@ -48,7 +48,7 @@ func (c *Client) GetRunningPodSandboxes() (map[string]*SandboxInfo, error) {
 
 	client := runtimeapi.NewRuntimeServiceClient(conn)
 
-	// List all ready sandboxes from the CRI
+	// List all ready sandboxes froms the CRI
 	filter := &runtimeapi.PodSandboxFilter{
 		State: &runtimeapi.PodSandboxStateValue{
 			State: runtimeapi.PodSandboxState_SANDBOX_READY,
